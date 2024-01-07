@@ -1,0 +1,56 @@
+import { Row, Col } from "react-bootstrap";
+import Product from "../components/product";
+import { useGetProductsQuery } from "../slices/productsApiSlice";
+import { useParams, Link } from "react-router-dom";
+import Message from "../components/message";
+import Loader from "../components/loader";
+import Paginate from "../components/paginate";
+import Product_Carousel from "../components/productcarousel";
+import Meta from "../components/meta";
+
+const Homescreen = () => {
+  const { keyword, pageNumber } = useParams();
+  const {
+    data: { products, pages, page } = {},
+    error,
+    isLoading,
+  } = useGetProductsQuery({ keyword, pageNumber });
+  console.log(products, pages, page);
+  return (
+    <>
+      {!keyword ? (
+        <Product_Carousel />
+      ) : (
+        <Link to="/" className="btn btn-light mb-4">
+          Go Back
+        </Link>
+      )}
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">
+          {error?.data?.message || error.error}
+        </Message>
+      ) : (
+        <>
+          <Meta />
+          <h1>Latest products</h1>
+          <Row>
+            {products.map((product) => (
+              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                <Product product={product} />
+              </Col>
+            ))}
+          </Row>
+          <Paginate
+            pages={pages}
+            page={page}
+            keyword={keyword ? keyword : ""}
+          />
+        </>
+      )}
+    </>
+  );
+};
+
+export default Homescreen;
