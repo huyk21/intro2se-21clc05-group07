@@ -13,6 +13,7 @@ import {
 import { toast } from "react-toastify";
 const Product_Edit_Screen = () => {
   const [priceError, setPriceError] = useState(""); // New state for price validation error
+  const [countInStockError, setCountInStockError] = useState(""); // New state for count in stock validation error
   const { id: productId } = useParams();
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -32,6 +33,16 @@ const Product_Edit_Screen = () => {
   const [uploadImage, { isLoading: uploadLoading }] =
     useUploadImageProductMutation();
   const navigate = useNavigate();
+  const handleCountInStockChange = (e) => {
+    const newCountInStock = e.target.value;
+
+    if (newCountInStock >= 0) {
+      setCountInStock(newCountInStock); // Update the count if it is 0 or more
+      setCountInStockError(""); // Clear any existing error
+    } else {
+      setCountInStockError("Count in stock cannot be negative"); // Set error message for negative count
+    }
+  };
   const handlePriceChange = (e) => {
     const newPrice = e.target.value;
 
@@ -165,10 +176,13 @@ const Product_Edit_Screen = () => {
               <Form.Control
                 type="number"
                 placeholder="Enter countInStock"
-                value={countInStock}
-                onChange={(e) => setCountInStock(e.target.value)}
+                onChange={handleCountInStockChange}
+                isInvalid={!!countInStockError}
                 required
               ></Form.Control>
+              {countInStockError && (
+                <div className="invalid-feedback">{countInStockError}</div>
+              )}
             </Form.Group>
             <Form.Group controlId="description">
               <Form.Label>Description </Form.Label>
