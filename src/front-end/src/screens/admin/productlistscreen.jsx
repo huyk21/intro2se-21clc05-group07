@@ -4,29 +4,25 @@ import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Message from "../../components/message";
 import Loader from "../../components/loader";
-
+import Paginate from "../../components/paginate";
 import {
   useGetProductsQuery,
   useDeleteProductMutation,
   useCreateProductMutation,
-  useUpdateProductMutation,
 } from "../../slices/productsApiSlice";
 import { toast } from "react-toastify";
 const Product_List_Screen = () => {
   const { pageNumber } = useParams();
-  const {
-    data: { products, pages, page } = {},
-    isLoading,
-    error,
-    refetch,
-  } = useGetProductsQuery();
+  const { data, isLoading, error, refetch } = useGetProductsQuery({
+    pageNumber,
+  });
   const [deleteProduct, { isLoading: loadingDelete }] =
     useDeleteProductMutation();
 
-  const deleteProductHandler = (id) => async (product_id) => {
+  const deleteProductHandler = async (product_id) => {
     if (window.confirm("Are you sure to delete this product?")) {
       try {
-        await deleteProduct(id).unwrap();
+        await deleteProduct(product_id).unwrap();
         refetch();
       } catch (err) {
         toast.error(err?.data?.message || err.error);
@@ -67,42 +63,45 @@ const Product_List_Screen = () => {
           {error?.data?.message || error.error}
         </Message>
       ) : (
-        <Table striped bordered hover responsive className="table-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name </th>
-              <th>Price</th>
-              <th>Category</th>
-              <th>Brand</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>$ {product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td>
-                  <LinkContainer to={`/admin/product/${product._id}/edit`}>
-                    <Button className="btn-sm mx-2" variant="light">
-                      <FaEdit />
-                    </Button>
-                  </LinkContainer>
-                  <Button
-                    className="btn-sm"
-                    variant="danger"
-                    onClick={deleteProductHandler(product._id)}
-                  >
-                    <FaTrash />
-                  </Button>
-                </td>
+        <>
+          <Table striped bordered hover responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name </th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Brand</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {data.products.map((product) => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>$ {product.price}</td>
+                  <td>{product.category}</td>
+                  <td>{product.brand}</td>
+                  <td>
+                    <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                      <Button className="btn-sm mx-2" variant="light">
+                        <FaEdit />
+                      </Button>
+                    </LinkContainer>
+                    <Button
+                      className="btn-sm"
+                      variant="danger"
+                      onClick={() => deleteProductHandler(product._id)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Paginate pages={data.pages} page={data.page} isAdmin={true} />
+        </>
       )}
     </>
   );
