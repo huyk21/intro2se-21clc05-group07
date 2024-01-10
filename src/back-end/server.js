@@ -29,26 +29,18 @@ app.use("/api/upload", uploadImageRoutes);
 app.get("/api/config/paypal", (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
-if (process.env.NODE_ENV === "production") {
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, "front-end/build")));
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "front-end/public")));
 
-  // Serve the 'images' folder from the 'build' directory
-  app.use(
-    "/images",
-    express.static(path.join(__dirname, "front-end/build/images"))
-  );
+// Serve the 'images' folder from the 'build' directory
+app.use(
+  "/images",
+  express.static(path.join(__dirname, "front-end/public/images"))
+);
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "front-end", "build", "index.html"))
-  );
-} else {
-  const __dirname = path.resolve();
-  app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-  app.get("/", (req, res) => {
-    res.send("API is running....");
-  });
-}
+app.get("*", (req, res) =>
+  res.sendFile(path.resolve(__dirname, "front-end", "build", "index.html"))
+);
 app.use(notFound);
 app.use(errorHandler);
 app.listen(port, () => {
