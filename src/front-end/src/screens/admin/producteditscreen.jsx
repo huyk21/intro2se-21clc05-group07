@@ -12,6 +12,7 @@ import {
 } from "../../slices/productsApiSlice";
 import { toast } from "react-toastify";
 const Product_Edit_Screen = () => {
+  const [priceError, setPriceError] = useState(""); // New state for price validation error
   const { id: productId } = useParams();
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -31,6 +32,16 @@ const Product_Edit_Screen = () => {
   const [uploadImage, { isLoading: uploadLoading }] =
     useUploadImageProductMutation();
   const navigate = useNavigate();
+  const handlePriceChange = (e) => {
+    const newPrice = e.target.value;
+
+    if (newPrice >= 0) {
+      setPrice(newPrice); // Update the price if it is 0 or more
+      setPriceError(""); // Clear any existing error
+    } else {
+      setPriceError("Price cannot be negative"); // Set error message for negative price
+    }
+  };
   const submitFormHandler = async (e) => {
     e.preventDefault();
     try {
@@ -105,9 +116,13 @@ const Product_Edit_Screen = () => {
                 type="number"
                 placeholder="Enter price"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={handlePriceChange}
+                isInvalid={!!priceError}
                 required
               ></Form.Control>
+              {priceError && (
+                <div className="invalid-feedback">{priceError}</div>
+              )}
             </Form.Group>
             <Form.Group controlId="image">
               <Form.Label>Image </Form.Label>
