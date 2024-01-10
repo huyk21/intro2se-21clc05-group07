@@ -31,12 +31,12 @@ app.get("/api/config/paypal", (req, res) =>
 );
 if (process.env.NODE_ENV === "production") {
   const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, "front-end/public")));
+  app.use(express.static(path.join(__dirname, "front-end/build")));
 
   // Serve the 'images' folder from the 'build' directory
   app.use(
     "/images",
-    express.static(path.join(__dirname, "front-end/public/images"))
+    express.static(path.join(__dirname, "front-end/build/images"))
   );
 
   app.get("*", (req, res) =>
