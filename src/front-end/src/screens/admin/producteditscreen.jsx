@@ -55,6 +55,18 @@ const Product_Edit_Screen = () => {
   };
   const submitFormHandler = async (e) => {
     e.preventDefault();
+    // Check required fields are not empty
+    if (
+      name.trim() === "" ||
+      price < 0 ||
+      brand.trim() === "" ||
+      category.trim() === "" ||
+      description.trim() === "" ||
+      countInStock < 0
+    ) {
+      toast.error("Please fill all the required fields correctly.");
+      return; // Prevent the form from submitting
+    }
     try {
       await updateProduct({
         productId,
@@ -118,7 +130,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required
+                required={true}
               ></Form.Control>
             </Form.Group>
             <Form.Group controlId="price">
@@ -129,7 +141,7 @@ const Product_Edit_Screen = () => {
                 value={price}
                 onChange={handlePriceChange}
                 isInvalid={!!priceError}
-                required
+                required={true}
               ></Form.Control>
               {priceError && (
                 <div className="invalid-feedback">{priceError}</div>
@@ -142,7 +154,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter image url"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
-                required
+                required={true}
               ></Form.Control>
               <Form.Control
                 label="Choose File"
@@ -158,7 +170,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter brand"
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                required
+                required={true}
               ></Form.Control>
             </Form.Group>
             <Form.Group controlId="category">
@@ -168,7 +180,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                required
+                required={true}
               ></Form.Control>
             </Form.Group>
             <Form.Group controlId="countInStock">
@@ -178,7 +190,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter countInStock"
                 onChange={handleCountInStockChange}
                 isInvalid={!!countInStockError}
-                required
+                required={true}
               ></Form.Control>
               {countInStockError && (
                 <div className="invalid-feedback">{countInStockError}</div>
@@ -191,7 +203,7 @@ const Product_Edit_Screen = () => {
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                required
+                required={true}
               ></Form.Control>
             </Form.Group>
             <Button
