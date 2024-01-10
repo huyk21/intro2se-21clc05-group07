@@ -9,13 +9,12 @@ import Product_Carousel from "../components/productcarousel";
 import Meta from "../components/meta";
 
 const Homescreen = () => {
-  const { keyword, pageNumber } = useParams();
-  const {
-    data: { products, pages, page } = {},
-    error,
-    isLoading,
-  } = useGetProductsQuery({ keyword, pageNumber });
-  console.log(products, pages, page);
+  const { pageNumber, keyword } = useParams();
+  const { data, error, isLoading } = useGetProductsQuery({
+    keyword,
+    pageNumber,
+  });
+
   return (
     <>
       {!keyword ? (
@@ -36,15 +35,15 @@ const Homescreen = () => {
           <Meta />
           <h1>Latest products</h1>
           <Row>
-            {products.map((product) => (
+            {data.products.map((product) => (
               <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
                 <Product product={product} />
               </Col>
             ))}
           </Row>
           <Paginate
-            pages={pages}
-            page={page}
+            pages={data.pages}
+            page={data.page}
             keyword={keyword ? keyword : ""}
           />
         </>
