@@ -4,7 +4,7 @@ import { Form, Button } from "react-bootstrap";
 import Message from "../../components/message";
 import Loader from "../../components/loader";
 import FormContainer from "../../components/formcontainer";
-import Paginate from "../../components/paginate";
+
 import {
   useUpdateProductMutation,
   useGetProductDetailsQuery,
@@ -118,12 +118,11 @@ const Product_Edit_Screen = () => {
                 onChange={(e) => setImage(e.target.value)}
                 required
               ></Form.Control>
-              <Form.File
-                id="image-file"
+              <Form.Control
                 label="Choose File"
-                custom
                 onChange={upLoadImageHandler}
-              ></Form.File>
+                type="file"
+              ></Form.Control>
               {uploadLoading && <Loader />}
             </Form.Group>
             <Form.Group controlId="brand">

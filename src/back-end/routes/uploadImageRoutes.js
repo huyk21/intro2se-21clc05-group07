@@ -5,7 +5,11 @@ const router = express.Router();
 // Cấu hình lưu trữ cho multer
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "uploads/");
+    if (process.env.NODE_ENV === "production") {
+      cb(null, path.join(__dirname, "front-end/build/images/")); // Production: Save to the "images" folder
+    } else {
+      cb(null, "uploads/"); // Development: Save to the "uploads" folder
+    }
   },
   filename(req, file, cb) {
     cb(
@@ -39,10 +43,18 @@ router.post("/", (req, res) => {
       return res.status(400).send({ message: err.message });
     }
 
-    res.status(200).send({
-      message: "Image uploaded successfully",
-      image: `/${req.file.path}`,
-    });
+    const baseName = path.basename(req.file.path);
+    if (process.env.NODE_ENV === "production") {
+      return res.status(200).send({
+        message: "Image uploaded successfully",
+        image: `/images/${baseName}`,
+      });
+    } else {
+      return res.status(200).send({
+        message: "Image uploaded successfully",
+        image: `/${req.file.path}`,
+      });
+    }
   });
 });
 
